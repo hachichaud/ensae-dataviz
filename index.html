@@ -2,16 +2,24 @@
 <html>
   <head>
     <title>Hello ENSAE</title>
+    <style type="text/css">
+      .red {
+        color: red;
+      }
+      .green {
+        color: green;
+      }
+    </style>
   </head>
   <body>
     <h1>Petit exemple de Javascript</h1>
     <div>
-      <p id="change-me">Je vais changer</p>
+      <p id="change-me" class="red">Je vais changer</p>
       <button onclick="myFunction()">Click me</button>
     </div>
     <script>
       function myFunction() {
-        document.getElementById("change-me").innerHTML = "Nouveau texte = magie";
+        document.getElementById("change-me").className = "green";
       }
     </script>
   </body>
