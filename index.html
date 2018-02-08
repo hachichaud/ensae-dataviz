@@ -11,9 +11,13 @@
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.css">
     <style>
       section:nth-child(odd) {
         background-color: #f5f5f5;
+      }
+      #nvd3-chart svg {
+        height: 400px;
       }
     </style>
   </head>
@@ -54,8 +58,62 @@
       <div class="container justify-content-md-center">
         <h3>Highcharts</h3>
         <div id="highchart-container-1"></div>
+        <hr>
+        <h3>NVD3</h3>
+        <div id="nvd3-chart"><svg></svg></div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.15/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.js"></script>
+        <script>
+          // NVD3 example
+          /**************************************
+           * Simple test data generator
+           */
+          var dataGen = function(groups, points) {
+            var data = [],
+                shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'],
+                random = d3.random.normal();
+
+            for (i = 0; i < groups; i++) {
+              data.push({
+                key: 'Group ' + i,
+                values: []
+              });
+
+              for (j = 0; j < points; j++) {
+                data[i].values.push({
+                  x: random()
+                , y: random()
+                , size: Math.random()
+                //, shape: shapes[j % 6]
+                });
+              }
+            }
+
+            return data;
+          }
+
+          nv.addGraph(function() {
+            var chart = nv.models.scatterChart()
+                          .showDistX(true)
+                          .showDistY(true)
+                          .color(d3.scale.category10().range());
+
+            chart.xAxis.tickFormat(d3.format('.02f'));
+            chart.yAxis.tickFormat(d3.format('.02f'));
+
+            d3.select('#nvd3-chart svg')
+                .datum(dataGen(4,40))
+              .transition().duration(500)
+                .call(chart);
+
+            nv.utils.windowResize(chart.update);
+
+            return chart;
+          });
+        </script>
+        <hr>
       </div>
-      <hr>
 
 
     </section>
