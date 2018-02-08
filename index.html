@@ -60,62 +60,75 @@
         <div id="highchart-container-1"></div>
         <hr>
         <h3>NVD3</h3>
-        <div id="nvd3-chart"><svg></svg></div>
+        <a href="https://codepen.io/anon/pen/aqpmQj">See code on codepen</a>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.15/d3.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.js"></script>
-        <script>
-          // NVD3 example
-          /**************************************
-           * Simple test data generator
-           */
-          var dataGen = function(groups, points) {
-            var data = [],
-                shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'],
-                random = d3.random.normal();
 
-            for (i = 0; i < groups; i++) {
-              data.push({
-                key: 'Group ' + i,
-                values: []
-              });
-
-              for (j = 0; j < points; j++) {
-                data[i].values.push({
-                  x: random()
-                , y: random()
-                , size: Math.random()
-                //, shape: shapes[j % 6]
-                });
-              }
+        <h3>D3 block</h3>
+        <p>Copied from <a href="https://bl.ocks.org/mbostock/87746f16b83cb9d5371394a001cbd772">https://bl.ocks.org/mbostock/87746f16b83cb9d5371394a001cbd772</a></p>
+        <div id="d3-block">
+          <style scoped>
+            .selected {
+              fill: red;
+              stroke: brown;
             }
+          </style>
+          <svg width="960" height="500"></svg>
+          <script src="https://d3js.org/d3.v4.min.js"></script>
+          <script>
 
-            return data;
+          var randomX = d3.randomUniform(0, 10),
+              randomY = d3.randomNormal(0.5, 0.12),
+              data = d3.range(800).map(function() { return [randomX(), randomY()]; });
+
+          var svg = d3.select("#d3-block svg"), // Only modified line is this, to prevent conflict with the svg tag
+              margin = {top: 194, right: 50, bottom: 214, left: 50},
+              width = +svg.attr("width") - margin.left - margin.right,
+              height = +svg.attr("height") - margin.top - margin.bottom,
+              g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+          var x = d3.scaleLinear()
+              .domain([0, 10])
+              .range([0, width]);
+
+          var y = d3.scaleLinear()
+              .range([height, 0]);
+
+          var brush = d3.brushX()
+              .extent([[0, 0], [width, height]])
+              .on("start brush", brushed);
+
+          var dot = g.append("g")
+              .attr("fill-opacity", 0.2)
+            .selectAll("circle")
+            .data(data)
+            .enter().append("circle")
+              .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
+              .attr("r", 3.5);
+
+          g.append("g")
+              .call(brush)
+              .call(brush.move, [3, 5].map(x))
+            .selectAll(".overlay")
+              .on("mousedown touchstart", beforebrushed, true);
+
+          g.append("g")
+              .attr("transform", "translate(0," + height + ")")
+              .call(d3.axisBottom(x));
+
+          function beforebrushed() {
+            d3.event.stopImmediatePropagation();
+            d3.select(this.parentNode).transition().call(brush.move, x.range());
           }
 
-          nv.addGraph(function() {
-            var chart = nv.models.scatterChart()
-                          .showDistX(true)
-                          .showDistY(true)
-                          .color(d3.scale.category10().range());
+          function brushed() {
+            var extent = d3.event.selection.map(x.invert, x);
+            dot.classed("selected", function(d) { return extent[0] <= d[0] && d[0] <= extent[1]; });
+          }
 
-            chart.xAxis.tickFormat(d3.format('.02f'));
-            chart.yAxis.tickFormat(d3.format('.02f'));
+          </script>
 
-            d3.select('#nvd3-chart svg')
-                .datum(dataGen(4,40))
-              .transition().duration(500)
-                .call(chart);
-
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-          });
-        </script>
+        </div>
         <hr>
-      </div>
-
-
     </section>
     <!-- Librairies JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
