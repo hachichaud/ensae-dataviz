@@ -25,3 +25,12 @@ $(function () {
         }]
     });
 });
+
+
+// Using d3js
+
+
+// Import data
+d3.json('flavors_of_cacao.json', function(err, data) {
+  $('#cacao-data-1').text(JSON.stringify(data, null, 2));
+})
