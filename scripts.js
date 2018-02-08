@@ -26,11 +26,8 @@ $(function () {
     });
 });
 
-
-// Using d3js
-
-
 // Import data
+// Using d3js
 d3.json('flavors_of_cacao.json', function(err, data) {
   $('#cacao-data-1').text(JSON.stringify(data, null, 2));
 })
@@ -54,3 +51,12 @@ d3.json('data-to-transform.json', function(err, data) {
   $('#transformed-data-2').text(JSON.stringify(curatedData, null, 2))
 
 })
+
+// Import CSV data using PapaParse
+Papa.parse('flavors_of_cacao.csv', {
+  download: true,
+  header: true,
+  complete: function(results){
+    $('#papa-data-1').text(JSON.stringify(results, null, 2));
+  }
+});
